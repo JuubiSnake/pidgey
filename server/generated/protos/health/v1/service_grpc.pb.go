@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PidgeyService_SayHello_FullMethodName = "/health.v1.PidgeyService/SayHello"
+	PidgeyService_SayHello_FullMethodName   = "/health.v1.PidgeyService/SayHello"
+	PidgeyService_WatchHello_FullMethodName = "/health.v1.PidgeyService/WatchHello"
 )
 
 // PidgeyServiceClient is the client API for PidgeyService service.
@@ -30,6 +31,7 @@ const (
 type PidgeyServiceClient interface {
 	// Sends a greeting
 	SayHello(ctx context.Context, in *SayHelloRequest, opts ...grpc.CallOption) (*SayHelloResponse, error)
+	WatchHello(ctx context.Context, in *WatchHelloRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[WatchHelloResponse], error)
 }
 
 type pidgeyServiceClient struct {
@@ -50,6 +52,25 @@ func (c *pidgeyServiceClient) SayHello(ctx context.Context, in *SayHelloRequest,
 	return out, nil
 }
 
+func (c *pidgeyServiceClient) WatchHello(ctx context.Context, in *WatchHelloRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[WatchHelloResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &PidgeyService_ServiceDesc.Streams[0], PidgeyService_WatchHello_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[WatchHelloRequest, WatchHelloResponse]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type PidgeyService_WatchHelloClient = grpc.ServerStreamingClient[WatchHelloResponse]
+
 // PidgeyServiceServer is the server API for PidgeyService service.
 // All implementations must embed UnimplementedPidgeyServiceServer
 // for forward compatibility.
@@ -58,6 +79,7 @@ func (c *pidgeyServiceClient) SayHello(ctx context.Context, in *SayHelloRequest,
 type PidgeyServiceServer interface {
 	// Sends a greeting
 	SayHello(context.Context, *SayHelloRequest) (*SayHelloResponse, error)
+	WatchHello(*WatchHelloRequest, grpc.ServerStreamingServer[WatchHelloResponse]) error
 	mustEmbedUnimplementedPidgeyServiceServer()
 }
 
@@ -70,6 +92,9 @@ type UnimplementedPidgeyServiceServer struct{}
 
 func (UnimplementedPidgeyServiceServer) SayHello(context.Context, *SayHelloRequest) (*SayHelloResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SayHello not implemented")
+}
+func (UnimplementedPidgeyServiceServer) WatchHello(*WatchHelloRequest, grpc.ServerStreamingServer[WatchHelloResponse]) error {
+	return status.Error(codes.Unimplemented, "method WatchHello not implemented")
 }
 func (UnimplementedPidgeyServiceServer) mustEmbedUnimplementedPidgeyServiceServer() {}
 func (UnimplementedPidgeyServiceServer) testEmbeddedByValue()                       {}
@@ -110,6 +135,17 @@ func _PidgeyService_SayHello_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PidgeyService_WatchHello_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(WatchHelloRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PidgeyServiceServer).WatchHello(m, &grpc.GenericServerStream[WatchHelloRequest, WatchHelloResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type PidgeyService_WatchHelloServer = grpc.ServerStreamingServer[WatchHelloResponse]
+
 // PidgeyService_ServiceDesc is the grpc.ServiceDesc for PidgeyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -122,6 +158,12 @@ var PidgeyService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PidgeyService_SayHello_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "WatchHello",
+			Handler:       _PidgeyService_WatchHello_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "protos/health/v1/service.proto",
 }

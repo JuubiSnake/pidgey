@@ -7,7 +7,15 @@ option go_package = "com.pidgey.server/generated/protos/health/v1;healthv1";
 // The greeting service definition.
 service PidgeyService {
   // Sends a greeting
-  rpc SayHello(SayHelloRequest) returns (SayHelloResponse) {}
+  rpc SayHello(SayHelloRequest) returns (SayHelloResponse);
+
+  rpc WatchHello(WatchHelloRequest) returns (stream WatchHelloResponse);
+}
+
+message WatchHelloRequest {}
+
+message WatchHelloResponse {
+  string message = 1;
 }
 
 // The request message containing the user's name.

@@ -24,7 +24,19 @@ type server struct {
 	healthv1.UnimplementedPidgeyServiceServer
 	mu       sync.RWMutex
 	watchers map[chan string]struct{}
+	buffer   chan string
 	payload  string
+}
+
+func (s *server) watchBuffer() {
+	for {
+		payload := <-s.buffer
+		s.mu.Lock()
+		for ch := range s.watchers {
+			ch <- payload
+		}
+		s.mu.Unlock()
+	}
 }
 
 func (s *server) UpdateNote(_ context.Context, request *healthv1.UpdateNoteRequest) (*healthv1.UpdateNoteResponse, error) {
@@ -35,9 +47,7 @@ func (s *server) UpdateNote(_ context.Context, request *healthv1.UpdateNoteReque
 	}
 	s.payload = s.payload[:request.Position] + request.Payload + s.payload[request.Position:]
 
-	for ch := range s.watchers {
-		ch <- s.payload
-	}
+	s.buffer <- s.payload
 	return &healthv1.UpdateNoteResponse{Message: s.payload}, nil
 }
 
@@ -62,7 +72,6 @@ func (s *server) WatchNote(in *healthv1.WatchNoteRequest, stream healthv1.Pidgey
 			if err := stream.Send(&healthv1.WatchNoteResponse{Payload: msg}); err != nil {
 				return err
 			}
-			s.mu.Unlock()
 		}
 	}
 }
@@ -73,15 +82,18 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	s := grpc.NewServer()
-	healthv1.RegisterPidgeyServiceServer(s, &server{
+	g := grpc.NewServer()
+	s := &server{
 		payload:  "",
 		watchers: make(map[chan string]struct{}),
 		mu:       sync.RWMutex{},
-	})
-	reflection.Register(s)
+		buffer:   make(chan string),
+	}
+	go s.watchBuffer()
+	healthv1.RegisterPidgeyServiceServer(g, s)
+	reflection.Register(g)
 	log.Printf("server listening at %v", lis.Addr())
-	if err := s.Serve(lis); err != nil {
+	if err := g.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
 }

@@ -11,3 +11,4 @@ Share notes, checklists and itineraries between people and collaborate on them i
 
 - [] Endpoint that accepts a cursor position and character.
 - [] Change to use event sink for updates when user posts a payload.
+- [] Start a flutter app that connects to the server.

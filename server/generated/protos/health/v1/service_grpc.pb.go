@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PidgeyService_SayHello_FullMethodName   = "/health.v1.PidgeyService/SayHello"
-	PidgeyService_WatchHello_FullMethodName = "/health.v1.PidgeyService/WatchHello"
+	PidgeyService_UpdateNote_FullMethodName = "/health.v1.PidgeyService/UpdateNote"
+	PidgeyService_WatchNote_FullMethodName  = "/health.v1.PidgeyService/WatchNote"
 )
 
 // PidgeyServiceClient is the client API for PidgeyService service.
@@ -30,8 +30,8 @@ const (
 // The greeting service definition.
 type PidgeyServiceClient interface {
 	// Sends a greeting
-	SayHello(ctx context.Context, in *SayHelloRequest, opts ...grpc.CallOption) (*SayHelloResponse, error)
-	WatchHello(ctx context.Context, in *WatchHelloRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[WatchHelloResponse], error)
+	UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error)
+	WatchNote(ctx context.Context, in *WatchNoteRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[WatchNoteResponse], error)
 }
 
 type pidgeyServiceClient struct {
@@ -42,23 +42,23 @@ func NewPidgeyServiceClient(cc grpc.ClientConnInterface) PidgeyServiceClient {
 	return &pidgeyServiceClient{cc}
 }
 
-func (c *pidgeyServiceClient) SayHello(ctx context.Context, in *SayHelloRequest, opts ...grpc.CallOption) (*SayHelloResponse, error) {
+func (c *pidgeyServiceClient) UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SayHelloResponse)
-	err := c.cc.Invoke(ctx, PidgeyService_SayHello_FullMethodName, in, out, cOpts...)
+	out := new(UpdateNoteResponse)
+	err := c.cc.Invoke(ctx, PidgeyService_UpdateNote_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pidgeyServiceClient) WatchHello(ctx context.Context, in *WatchHelloRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[WatchHelloResponse], error) {
+func (c *pidgeyServiceClient) WatchNote(ctx context.Context, in *WatchNoteRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[WatchNoteResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &PidgeyService_ServiceDesc.Streams[0], PidgeyService_WatchHello_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &PidgeyService_ServiceDesc.Streams[0], PidgeyService_WatchNote_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[WatchHelloRequest, WatchHelloResponse]{ClientStream: stream}
+	x := &grpc.GenericClientStream[WatchNoteRequest, WatchNoteResponse]{ClientStream: stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (c *pidgeyServiceClient) WatchHello(ctx context.Context, in *WatchHelloRequ
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type PidgeyService_WatchHelloClient = grpc.ServerStreamingClient[WatchHelloResponse]
+type PidgeyService_WatchNoteClient = grpc.ServerStreamingClient[WatchNoteResponse]
 
 // PidgeyServiceServer is the server API for PidgeyService service.
 // All implementations must embed UnimplementedPidgeyServiceServer
@@ -78,8 +78,8 @@ type PidgeyService_WatchHelloClient = grpc.ServerStreamingClient[WatchHelloRespo
 // The greeting service definition.
 type PidgeyServiceServer interface {
 	// Sends a greeting
-	SayHello(context.Context, *SayHelloRequest) (*SayHelloResponse, error)
-	WatchHello(*WatchHelloRequest, grpc.ServerStreamingServer[WatchHelloResponse]) error
+	UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error)
+	WatchNote(*WatchNoteRequest, grpc.ServerStreamingServer[WatchNoteResponse]) error
 	mustEmbedUnimplementedPidgeyServiceServer()
 }
 
@@ -90,11 +90,11 @@ type PidgeyServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPidgeyServiceServer struct{}
 
-func (UnimplementedPidgeyServiceServer) SayHello(context.Context, *SayHelloRequest) (*SayHelloResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method SayHello not implemented")
+func (UnimplementedPidgeyServiceServer) UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateNote not implemented")
 }
-func (UnimplementedPidgeyServiceServer) WatchHello(*WatchHelloRequest, grpc.ServerStreamingServer[WatchHelloResponse]) error {
-	return status.Error(codes.Unimplemented, "method WatchHello not implemented")
+func (UnimplementedPidgeyServiceServer) WatchNote(*WatchNoteRequest, grpc.ServerStreamingServer[WatchNoteResponse]) error {
+	return status.Error(codes.Unimplemented, "method WatchNote not implemented")
 }
 func (UnimplementedPidgeyServiceServer) mustEmbedUnimplementedPidgeyServiceServer() {}
 func (UnimplementedPidgeyServiceServer) testEmbeddedByValue()                       {}
@@ -117,34 +117,34 @@ func RegisterPidgeyServiceServer(s grpc.ServiceRegistrar, srv PidgeyServiceServe
 	s.RegisterService(&PidgeyService_ServiceDesc, srv)
 }
 
-func _PidgeyService_SayHello_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SayHelloRequest)
+func _PidgeyService_UpdateNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateNoteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PidgeyServiceServer).SayHello(ctx, in)
+		return srv.(PidgeyServiceServer).UpdateNote(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PidgeyService_SayHello_FullMethodName,
+		FullMethod: PidgeyService_UpdateNote_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PidgeyServiceServer).SayHello(ctx, req.(*SayHelloRequest))
+		return srv.(PidgeyServiceServer).UpdateNote(ctx, req.(*UpdateNoteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PidgeyService_WatchHello_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(WatchHelloRequest)
+func _PidgeyService_WatchNote_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(WatchNoteRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(PidgeyServiceServer).WatchHello(m, &grpc.GenericServerStream[WatchHelloRequest, WatchHelloResponse]{ServerStream: stream})
+	return srv.(PidgeyServiceServer).WatchNote(m, &grpc.GenericServerStream[WatchNoteRequest, WatchNoteResponse]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type PidgeyService_WatchHelloServer = grpc.ServerStreamingServer[WatchHelloResponse]
+type PidgeyService_WatchNoteServer = grpc.ServerStreamingServer[WatchNoteResponse]
 
 // PidgeyService_ServiceDesc is the grpc.ServiceDesc for PidgeyService service.
 // It's only intended for direct use with grpc.RegisterService,
@@ -154,14 +154,14 @@ var PidgeyService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PidgeyServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SayHello",
-			Handler:    _PidgeyService_SayHello_Handler,
+			MethodName: "UpdateNote",
+			Handler:    _PidgeyService_UpdateNote_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "WatchHello",
-			Handler:       _PidgeyService_WatchHello_Handler,
+			StreamName:    "WatchNote",
+			Handler:       _PidgeyService_WatchNote_Handler,
 			ServerStreams: true,
 		},
 	},

@@ -9,7 +9,9 @@ import (
 	"sync"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/grpc/status"
 
 	healthv1 "com.pidgey.server/generated/protos/health/v1"
 )
@@ -22,25 +24,25 @@ type server struct {
 	healthv1.UnimplementedPidgeyServiceServer
 	mu       sync.RWMutex
 	watchers map[chan string]struct{}
+	payload  string
 }
 
-func (s *server) SayHello(_ context.Context, in *healthv1.SayHelloRequest) (*healthv1.SayHelloResponse, error) {
-	msg := "Hello " + in.Name
-
-	s.mu.RLock()
-	for ch := range s.watchers {
-		select {
-		case ch <- msg:
-		default:
-		}
+func (s *server) UpdateNote(_ context.Context, request *healthv1.UpdateNoteRequest) (*healthv1.UpdateNoteResponse, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if request.Position > int64(len(s.payload)) {
+		return nil, status.Errorf(codes.InvalidArgument, "position out of range")
 	}
-	s.mu.RUnlock()
+	s.payload = s.payload[:request.Position] + request.Payload + s.payload[request.Position:]
 
-	return &healthv1.SayHelloResponse{Message: msg}, nil
+	for ch := range s.watchers {
+		ch <- s.payload
+	}
+	return &healthv1.UpdateNoteResponse{Message: s.payload}, nil
 }
 
-func (s *server) WatchHello(in *healthv1.WatchHelloRequest, stream healthv1.PidgeyService_WatchHelloServer) error {
-	ch := make(chan string, 10)
+func (s *server) WatchNote(in *healthv1.WatchNoteRequest, stream healthv1.PidgeyService_WatchNoteServer) error {
+	ch := make(chan string, 1)
 
 	s.mu.Lock()
 	s.watchers[ch] = struct{}{}
@@ -57,9 +59,10 @@ func (s *server) WatchHello(in *healthv1.WatchHelloRequest, stream healthv1.Pidg
 		case <-stream.Context().Done():
 			return nil
 		case msg := <-ch:
-			if err := stream.Send(&healthv1.WatchHelloResponse{Message: msg}); err != nil {
+			if err := stream.Send(&healthv1.WatchNoteResponse{Payload: msg}); err != nil {
 				return err
 			}
+			s.mu.Unlock()
 		}
 	}
 }
@@ -71,7 +74,11 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	healthv1.RegisterPidgeyServiceServer(s, &server{watchers: make(map[chan string]struct{}), mu: sync.RWMutex{}})
+	healthv1.RegisterPidgeyServiceServer(s, &server{
+		payload:  "",
+		watchers: make(map[chan string]struct{}),
+		mu:       sync.RWMutex{},
+	})
 	reflection.Register(s)
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {

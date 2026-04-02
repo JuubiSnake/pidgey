@@ -21,26 +21,26 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type WatchHelloRequest struct {
+type WatchNoteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *WatchHelloRequest) Reset() {
-	*x = WatchHelloRequest{}
+func (x *WatchNoteRequest) Reset() {
+	*x = WatchNoteRequest{}
 	mi := &file_protos_health_v1_service_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *WatchHelloRequest) String() string {
+func (x *WatchNoteRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*WatchHelloRequest) ProtoMessage() {}
+func (*WatchNoteRequest) ProtoMessage() {}
 
-func (x *WatchHelloRequest) ProtoReflect() protoreflect.Message {
+func (x *WatchNoteRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_protos_health_v1_service_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -52,32 +52,32 @@ func (x *WatchHelloRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use WatchHelloRequest.ProtoReflect.Descriptor instead.
-func (*WatchHelloRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use WatchNoteRequest.ProtoReflect.Descriptor instead.
+func (*WatchNoteRequest) Descriptor() ([]byte, []int) {
 	return file_protos_health_v1_service_proto_rawDescGZIP(), []int{0}
 }
 
-type WatchHelloResponse struct {
+type WatchNoteResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	Payload       string                 `protobuf:"bytes,1,opt,name=payload,proto3" json:"payload,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *WatchHelloResponse) Reset() {
-	*x = WatchHelloResponse{}
+func (x *WatchNoteResponse) Reset() {
+	*x = WatchNoteResponse{}
 	mi := &file_protos_health_v1_service_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *WatchHelloResponse) String() string {
+func (x *WatchNoteResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*WatchHelloResponse) ProtoMessage() {}
+func (*WatchNoteResponse) ProtoMessage() {}
 
-func (x *WatchHelloResponse) ProtoReflect() protoreflect.Message {
+func (x *WatchNoteResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_protos_health_v1_service_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -89,40 +89,41 @@ func (x *WatchHelloResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use WatchHelloResponse.ProtoReflect.Descriptor instead.
-func (*WatchHelloResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use WatchNoteResponse.ProtoReflect.Descriptor instead.
+func (*WatchNoteResponse) Descriptor() ([]byte, []int) {
 	return file_protos_health_v1_service_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *WatchHelloResponse) GetMessage() string {
+func (x *WatchNoteResponse) GetPayload() string {
 	if x != nil {
-		return x.Message
+		return x.Payload
 	}
 	return ""
 }
 
 // The request message containing the user's name.
-type SayHelloRequest struct {
+type UpdateNoteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Payload       string                 `protobuf:"bytes,1,opt,name=payload,proto3" json:"payload,omitempty"`
+	Position      int64                  `protobuf:"varint,2,opt,name=position,proto3" json:"position,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SayHelloRequest) Reset() {
-	*x = SayHelloRequest{}
+func (x *UpdateNoteRequest) Reset() {
+	*x = UpdateNoteRequest{}
 	mi := &file_protos_health_v1_service_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SayHelloRequest) String() string {
+func (x *UpdateNoteRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SayHelloRequest) ProtoMessage() {}
+func (*UpdateNoteRequest) ProtoMessage() {}
 
-func (x *SayHelloRequest) ProtoReflect() protoreflect.Message {
+func (x *UpdateNoteRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_protos_health_v1_service_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -134,40 +135,47 @@ func (x *SayHelloRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SayHelloRequest.ProtoReflect.Descriptor instead.
-func (*SayHelloRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use UpdateNoteRequest.ProtoReflect.Descriptor instead.
+func (*UpdateNoteRequest) Descriptor() ([]byte, []int) {
 	return file_protos_health_v1_service_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *SayHelloRequest) GetName() string {
+func (x *UpdateNoteRequest) GetPayload() string {
 	if x != nil {
-		return x.Name
+		return x.Payload
 	}
 	return ""
 }
 
+func (x *UpdateNoteRequest) GetPosition() int64 {
+	if x != nil {
+		return x.Position
+	}
+	return 0
+}
+
 // The response message containing the greetings
-type SayHelloResponse struct {
+type UpdateNoteResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SayHelloResponse) Reset() {
-	*x = SayHelloResponse{}
+func (x *UpdateNoteResponse) Reset() {
+	*x = UpdateNoteResponse{}
 	mi := &file_protos_health_v1_service_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SayHelloResponse) String() string {
+func (x *UpdateNoteResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SayHelloResponse) ProtoMessage() {}
+func (*UpdateNoteResponse) ProtoMessage() {}
 
-func (x *SayHelloResponse) ProtoReflect() protoreflect.Message {
+func (x *UpdateNoteResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_protos_health_v1_service_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -179,12 +187,12 @@ func (x *SayHelloResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SayHelloResponse.ProtoReflect.Descriptor instead.
-func (*SayHelloResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use UpdateNoteResponse.ProtoReflect.Descriptor instead.
+func (*UpdateNoteResponse) Descriptor() ([]byte, []int) {
 	return file_protos_health_v1_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *SayHelloResponse) GetMessage() string {
+func (x *UpdateNoteResponse) GetMessage() string {
 	if x != nil {
 		return x.Message
 	}
@@ -195,18 +203,19 @@ var File_protos_health_v1_service_proto protoreflect.FileDescriptor
 
 const file_protos_health_v1_service_proto_rawDesc = "" +
 	"\n" +
-	"\x1eprotos/health/v1/service.proto\x12\thealth.v1\"\x13\n" +
-	"\x11WatchHelloRequest\".\n" +
-	"\x12WatchHelloResponse\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage\"%\n" +
-	"\x0fSayHelloRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\",\n" +
-	"\x10SayHelloResponse\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage2\xa1\x01\n" +
-	"\rPidgeyService\x12C\n" +
-	"\bSayHello\x12\x1a.health.v1.SayHelloRequest\x1a\x1b.health.v1.SayHelloResponse\x12K\n" +
+	"\x1eprotos/health/v1/service.proto\x12\thealth.v1\"\x12\n" +
+	"\x10WatchNoteRequest\"-\n" +
+	"\x11WatchNoteResponse\x12\x18\n" +
+	"\apayload\x18\x01 \x01(\tR\apayload\"I\n" +
+	"\x11UpdateNoteRequest\x12\x18\n" +
+	"\apayload\x18\x01 \x01(\tR\apayload\x12\x1a\n" +
+	"\bposition\x18\x02 \x01(\x03R\bposition\".\n" +
+	"\x12UpdateNoteResponse\x12\x18\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage2\xa4\x01\n" +
+	"\rPidgeyService\x12I\n" +
 	"\n" +
-	"WatchHello\x12\x1c.health.v1.WatchHelloRequest\x1a\x1d.health.v1.WatchHelloResponse0\x01B7Z5com.pidgey.server/generated/protos/health/v1;healthv1b\x06proto3"
+	"UpdateNote\x12\x1c.health.v1.UpdateNoteRequest\x1a\x1d.health.v1.UpdateNoteResponse\x12H\n" +
+	"\tWatchNote\x12\x1b.health.v1.WatchNoteRequest\x1a\x1c.health.v1.WatchNoteResponse0\x01B7Z5com.pidgey.server/generated/protos/health/v1;healthv1b\x06proto3"
 
 var (
 	file_protos_health_v1_service_proto_rawDescOnce sync.Once
@@ -222,16 +231,16 @@ func file_protos_health_v1_service_proto_rawDescGZIP() []byte {
 
 var file_protos_health_v1_service_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_protos_health_v1_service_proto_goTypes = []any{
-	(*WatchHelloRequest)(nil),  // 0: health.v1.WatchHelloRequest
-	(*WatchHelloResponse)(nil), // 1: health.v1.WatchHelloResponse
-	(*SayHelloRequest)(nil),    // 2: health.v1.SayHelloRequest
-	(*SayHelloResponse)(nil),   // 3: health.v1.SayHelloResponse
+	(*WatchNoteRequest)(nil),   // 0: health.v1.WatchNoteRequest
+	(*WatchNoteResponse)(nil),  // 1: health.v1.WatchNoteResponse
+	(*UpdateNoteRequest)(nil),  // 2: health.v1.UpdateNoteRequest
+	(*UpdateNoteResponse)(nil), // 3: health.v1.UpdateNoteResponse
 }
 var file_protos_health_v1_service_proto_depIdxs = []int32{
-	2, // 0: health.v1.PidgeyService.SayHello:input_type -> health.v1.SayHelloRequest
-	0, // 1: health.v1.PidgeyService.WatchHello:input_type -> health.v1.WatchHelloRequest
-	3, // 2: health.v1.PidgeyService.SayHello:output_type -> health.v1.SayHelloResponse
-	1, // 3: health.v1.PidgeyService.WatchHello:output_type -> health.v1.WatchHelloResponse
+	2, // 0: health.v1.PidgeyService.UpdateNote:input_type -> health.v1.UpdateNoteRequest
+	0, // 1: health.v1.PidgeyService.WatchNote:input_type -> health.v1.WatchNoteRequest
+	3, // 2: health.v1.PidgeyService.UpdateNote:output_type -> health.v1.UpdateNoteResponse
+	1, // 3: health.v1.PidgeyService.WatchNote:output_type -> health.v1.WatchNoteResponse
 	2, // [2:4] is the sub-list for method output_type
 	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
